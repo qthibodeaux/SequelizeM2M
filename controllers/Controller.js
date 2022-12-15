@@ -4,50 +4,97 @@ exports.hey = async (req, res) => {
     res.status(500).send("yo")
 }
 
-exports.addMom = async (req, res) => {
-    const { fName, lName, married } = req.body
-    console.log(req.body)
+exports.addUser = async (req, res) => {
+    const { name, userName, mobileNum, address } = req.body
 
     try {
-        db.Mom.create({
-            firstName: fName, lastName: lName, married
-        }).then(Mom => {
-            res.status(200).json(Mom)
+        const results = await db.users.create({
+            name,
+            userName,
+            userDetails: {
+                mobileNum,
+                address
+            }
+        }, {
+            include: {
+                model: db.userDetails,
+                as: 'userDetails',
+            }
         })
+
+        res.status(200).json(results)
     } catch (error) {
         res.status(500).send(error)
     }
 }
 
-exports.getMoms = async (req, res) => {
+exports.getUsers = async (req, res) => {
     try {
-        let getMoms = await db.Mom.findAll()
-
-        res.status(200).json(getMoms)
-    } catch (error) {
-        res.status(500).send(error)
-    }
-}
-
-exports.addDad = async (req, res) => {
-    const { fName, lName, married } = req.body
-
-    try {
-        db.Dad.create({
-            firstName: fName, lastName: lName, married
-        }).then(Dad => {
-            res.status(200).json(Dad)
+        const results = await db.users.findAll({
+            include: [{
+                model: db.userDetails,
+                as: 'userDetails',
+            }]
         })
+
+        res.status(200).json(results)
     } catch (error) {
         res.status(500).send(error)
     }
 }
 
-exports.getDads = async (req, res) => {
-    try {
-        let getDads = await db.Dad.findAll()
+exports.updateUser = async (req, res) => {
+    console.log('body ', req.body)
+    const { name, userName, mobileNum, address, userId } = req.body
 
-        res.status(200).json(getDads)
+    const updateUser = {
+        name,
+        userName
+    }
+    const updateUserDetails = {
+        mobileNum,
+        address
+    }        
+
+    try {
+        const updatePromises = []
+        const updateUsersPromise = db.users.update(
+            updateUser,
+            { where: { id: userId }}
+        )
+        updatePromises.push(updateUsersPromise)
+
+        const updateUserDetailsPromise = db.userDetails.update(
+            updateUserDetails,
+            { where: { userId } },
+        )
+        updatePromises.push(updateUserDetailsPromise)
+
+        await Promise.all(updatePromises)
+
+        res.status(200).json({results: 'User records updated'})
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}
+
+exports.deleteUser = async (req, res) => {
+    try {
+        const { userId } = req.body
+
+        const results = await db.users.destroy({
+            where: {
+                id: userId,
+            },
+            cascade: true,
+            include: [{
+                model: db.userDetails,
+                as: 'userDetails',
+                cascade: true
+            }]
+        })
+
+        res.status(200).json(results)
     } catch (error) {
         res.status(500).send(error)
     }
