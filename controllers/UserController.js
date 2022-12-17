@@ -5,7 +5,7 @@ exports.hey = async (req, res) => {
 }
 
 exports.addUser = async (req, res) => {
-    const { name, userName, mobileNum, address } = req.body
+    const { name, userName, mobileNum, address, posts } = req.body
 
     try {
         const results = await db.users.create({
@@ -14,12 +14,16 @@ exports.addUser = async (req, res) => {
             userDetails: {
                 mobileNum,
                 address
-            }
+            },
+            posts
         }, {
-            include: {
+            include: [{
                 model: db.userDetails,
                 as: 'userDetails',
-            }
+            },{
+                model: db.posts,
+                as: 'posts',
+            }]
         })
 
         res.status(200).json(results)
@@ -34,6 +38,9 @@ exports.getUsers = async (req, res) => {
             include: [{
                 model: db.userDetails,
                 as: 'userDetails',
+            },{
+                model: db.posts,
+                as: 'posts',
             }]
         })
 
