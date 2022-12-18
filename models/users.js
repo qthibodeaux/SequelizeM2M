@@ -17,8 +17,13 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE'
       })
       users.hasMany(models.posts, {
-        foreignKey: 'usersId',
+        foreignKey: 'userId',
         as: 'posts'
+      })
+      users.belongsToMany(models.groups, {
+        foreignKey: 'userId',
+        through: 'users_groups',
+        as: 'groups'
       })
     }
   }

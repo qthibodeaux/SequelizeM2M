@@ -5,7 +5,7 @@ exports.hey = async (req, res) => {
 }
 
 exports.addUser = async (req, res) => {
-    const { name, userName, mobileNum, address, posts } = req.body
+    const { name, userName, mobileNum, address, posts, groups } = req.body
 
     try {
         const results = await db.users.create({
@@ -15,7 +15,8 @@ exports.addUser = async (req, res) => {
                 mobileNum,
                 address
             },
-            posts
+            posts,
+            groups
         }, {
             include: [{
                 model: db.userDetails,
@@ -23,6 +24,10 @@ exports.addUser = async (req, res) => {
             },{
                 model: db.posts,
                 as: 'posts',
+            },{
+                model: db.groups,
+                as: 'groups',
+                through: db.users_groups
             }]
         })
 
