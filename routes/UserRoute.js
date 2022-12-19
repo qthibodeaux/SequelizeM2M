@@ -3,8 +3,6 @@ const { hey, addUser, getUsers, updateUser, deleteUser } = require('../controlle
 
 const router = express.Router()
 
-router.get('/hey', hey)
-
 router.get('/getUsers', getUsers)
 router.post('/addUser', addUser)
 router.put('/updateUser', updateUser)

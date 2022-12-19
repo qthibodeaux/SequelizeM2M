@@ -5,7 +5,9 @@ const port = 4000;
  
 const app = express();
 
-const Routes = require('./routes/index')
+const userRoutes = require('./routes/UserRoute')
+const postRoutes = require('./routes/PostRoute')
+const groupRoutes = require('./routes/GroupRoute')
  
 app.use(helmet());
 app.use(express.json())
@@ -15,7 +17,9 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
  
-app.use('/h', Routes)
+app.use('/user', userRoutes)
+app.use('/post', postRoutes)
+app.use('/group', groupRoutes)
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);

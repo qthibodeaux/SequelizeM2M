@@ -29,10 +29,30 @@ exports.addUserGroup = async (req, res) => {
     }
 }
 
-exports.geGroups = async (req, res) => {
+exports.getAllGroups = async (req, res) => {
     try {
-        const results = await db.group.findAll({
+        const results = await db.groups.findAll({
             attributes: ['id', 'groupName'],
+        })
+
+        res.status(200).json(results)
+    } catch (error) {
+        res.status(500).send(error)
+    }
+}
+
+exports.getGroup = async (req, res) => {
+    const { groupId } = req.body
+
+    try {
+        const results = await db.groups.findAll({
+            where: { id: groupId },
+            attributes: ['id', 'groupName'],
+            include: {
+                model: db.users,
+                as: 'users',
+                attributes: ['id', 'userName', 'name']
+            }
         })
 
         res.status(200).json(results)

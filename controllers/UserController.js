@@ -1,9 +1,5 @@
 const db = require('../models')
 
-exports.hey = async (req, res) => {
-    res.status(500).send("yo")
-}
-
 exports.addUser = async (req, res) => {
     const { name, userName, mobileNum, address, posts, groups } = req.body
 

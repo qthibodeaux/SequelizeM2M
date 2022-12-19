@@ -22,9 +22,9 @@ exports.readPost = async (req, res) => {
         const results = await db.posts.findAll({
             where: { userId },
             attributes: ['title', 'userId'],
-            ibnclude: {
+            include: {
                 model: db.users,
-                as: 'useres',
+                as: 'users',
                 attributes: ['userName', 'name'],
             }
         })
